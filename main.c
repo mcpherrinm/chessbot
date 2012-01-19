@@ -9,6 +9,7 @@ float p[4][2] = { 250.0, 100.0, 0,0,0,0,0,0 };
 float theta[4] = { 0.3, 0.6, M_PI, 0.0 };
 float rtheta[4] = { 7*M_PI/8, M_PI/12, M_PI, 0.0 }; // (relative angles) make this match the theta values better
 float length[3] = {234.0/1.5, 300.0/1.5, 60.0/1.5};
+int calibration[4][2] = {1500, 800, 1450, 800, 1600, 800, 1500, 1000};
 int grip = 0;
 
 #define DT 0.03
@@ -66,7 +67,7 @@ void solveCircles(float l1, float l2, float tx, float ty, float* t1, float* t2) 
     *t2 += rotate;
 }
 
-    
+
 // stupid solver
 void ssolve(float tx, float ty) {
     float d = sqrt(pow(tx,2) + pow(ty,2));
@@ -76,7 +77,7 @@ void ssolve(float tx, float ty) {
         if (rtheta[0] < 0) rtheta[0] += M_PI;
         theta[1] = theta[0];
         theta[2] = theta[0];
-    } 
+    }
     else if (d > (length[0]+length[1]-length[2])) {
         solveCircles(length[0]+length[1], length[2], tx, ty, theta, theta+2);
         theta[1]=theta[0];
@@ -139,10 +140,10 @@ void sayshit() {
   static float old_theta2 = FLT_MAX;
   static float old_theta3 = FLT_MAX;
   static float old_grip = FLT_MAX;
-  float theta0 = 1500.0 + 800*(rtheta[0]/M_PI*2 - 1.0);
-  float theta1 = 1450.0 - 800.0*(rtheta[1]/M_PI*2.0 - 1.0);
-  float theta2 = 1600.0 + 800.0*(rtheta[2]/M_PI*2.0 - 1.0);
-  float theta3 = 1500.0 + 1000.0*theta[3]/M_PI*2.0;
+  float theta0 = calibration[0][0] + calibration[0][1]*(rtheta[0]/M_PI*2 - 1.0);
+  float theta1 = calibration[1][0] - calibration[1][1]*(rtheta[1]/M_PI*2.0 - 1.0);
+  float theta2 = calibration[2][0] + calibration[2][1]*(rtheta[2]/M_PI*2.0 - 1.0);
+  float theta3 = calibration[3][0] + calibration[3][1]*theta[3]/M_PI*2.0;
   if (theta0 != old_theta0) printf("#1 P%d S%d\r", (int)theta0, SPEED);
   if (theta1 != old_theta1) printf("#2 P%d S%d\r", (int)theta1, SPEED);
   if (theta2 != old_theta2) printf("#3 P%d S%d\r", (int)theta2, SPEED);
@@ -160,6 +161,13 @@ void sayshit() {
   fflush(stdout);
 }
 
+void initialize() {
+    ssolve(102, 139);
+    calcPoints();
+    sayshit();
+}
+
+
 int main() {
   glfwInit();
   glfwOpenWindow(WIDTH, HEIGHT, 8,8,8,8,0,0,GLFW_WINDOW);
@@ -169,14 +177,19 @@ int main() {
   glMatrixMode(GL_MODELVIEW);
 
   int running = 1;
-  double t0 = 0.0;
+  double t0 = glfwGetTime();
+  initialize();
+  sleep(1);
   while (running) {
-    int x, y;
+    int x, y, a;
     glfwGetMousePos(&x, &y);
+    a = glfwGetMouseWheel();
     y = HEIGHT - y;
     x-= p[0][0];
     y-= p[0][1];
-    //theta[3] = (double)y/(double)HEIGHT*2.0-1.0;
+    theta[3] = (double)a*M_PI/(24);
+    if (theta[3] < -M_PI/2) theta[3] = -M_PI/2;
+    if (theta[3] > M_PI/2) theta[3] = M_PI/2;
     //solve(x, p[0][1]+20);
     ssolve(x, y);
     calcPoints();
@@ -185,7 +198,7 @@ int main() {
       grip = !glfwGetMouseButton(GLFW_MOUSE_BUTTON_1);
       t0 = t;
       sayshit();
-      // printf("%f, %f, %f, %f\n", rtheta[0]*180/M_PI,rtheta[1]*180/M_PI,rtheta[2]*180/M_PI,theta[2]*180/M_PI);
+      //printf("%f, %f, %f, %f\n", rtheta[0]*180/M_PI,rtheta[1]*180/M_PI,rtheta[2]*180/M_PI,theta[2]*180/M_PI);
 
     }
 
