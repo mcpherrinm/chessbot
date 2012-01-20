@@ -13,12 +13,13 @@ float length[3] = {234.0/1.5, 300.0/1.5, 60.0/1.5};
 //int calibration[4][2] = {1500, 800, 1450, 800, 1600, 800, 1500, 1000};
 int grip = 0;
 arm_state st;
+int debug;
 
 #define DT 0.03
 #define WIDTH 640
 #define HEIGHT 480
 #define DELAY 0.01
-#define SPEED 1000
+#define SPEED 2000
 
 #define GRIP_BIAS 20.0
 
@@ -147,16 +148,16 @@ void sayshit() {
   if (theta3 != old_theta3) printf("#0 P%d S%d\r", (int)theta3, SPEED);*/
 
   armSetRotation(&st, 1, rtheta[0]);
-  armSetRotation(&st, 2, rtheta[1]);
+  armSetRotation(&st, 2, M_PI-rtheta[1]);
   armSetRotation(&st, 3, rtheta[2]);
   armSetRotation(&st, 0, theta[3]);
 
   if (grip)
-    armSetRotation(&st, 4, M_PI/2.0);
+    armSetRotation(&st, 4, M_PI/4.0);
   else
-    armSetRotation(&st, 4, 2*M_PI);
+    armSetRotation(&st, 4, M_PI);
 
-  armFlush(&st);
+  armFlush(&st, debug);
 }
 
 void initialize() {
@@ -166,11 +167,16 @@ void initialize() {
 }
 
 
-int main() {
+int main(int argc, char ** argv) {
+  debug = argc == 1;
   if(!armInit(&st, "/dev/ttyUSB0"))
-    exit(1);
+    if(debug)
+      st.fd = 1;
+    else
+      exit(1);
   for(int i=0;i<6;++i)
     armSetSpeed(&st, i, SPEED);
+
 
   glfwInit();
   glfwOpenWindow(WIDTH, HEIGHT, 8,8,8,8,0,0,GLFW_WINDOW);
@@ -224,5 +230,5 @@ int main() {
   theta[1] = 1.129202;
   grip = 1;
   sayshit();
-  armClose(&st);
+  if(!debug) armClose(&st);
 }

@@ -119,7 +119,7 @@ void armSetSpeed(arm_state * as, int joint, short speed) {
 	as->joint_s[joint] = speed;
 }
 
-void armFlush(arm_state * as) {
+void armFlush(arm_state * as, int debug) {
 	int i;
 	if(!as || !as->fd) {
 		fprintf(stderr, "al5d: armFlush called on invalid context.\n");
@@ -130,7 +130,7 @@ void armFlush(arm_state * as) {
 	for(i=0;i<NUM_JOINTS;++i) {
 		as->joint_p[i] =
 			servo_range[2*i] +
-			((as->joint_pos[i] / 2*M_PI - 1.0) *
+			((as->joint_pos[i] / (M_PI)) *
 			(double)(servo_range[2*i+1] - servo_range[2*i]));
 	}
 
@@ -149,7 +149,13 @@ void armFlush(arm_state * as) {
 
 	c_pos += snprintf(c_pos, 1024 - (c_pos - c_bfr), "\r\n");
 
+	if((c_pos - c_bfr) < 4)
+		return;
+
 	// done
-	write(as->fd, c_bfr, (c_pos - c_bfr));
+	if(debug)
+		fwrite(c_bfr, sizeof(char), (c_pos - c_bfr), stdout);
+	else
+		write(as->fd, c_bfr, (c_pos - c_bfr));
 }
 
