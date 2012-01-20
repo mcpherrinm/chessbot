@@ -10,7 +10,6 @@ float p[4][2] = { 250.0, 100.0, 0,0,0,0,0,0 };
 float theta[4] = { 0.3, 0.6, M_PI, 0.0 };
 float rtheta[4] = { 7*M_PI/8, M_PI/12, M_PI, 0.0 }; // (relative angles) make this match the theta values better
 float length[3] = {147.0, 190.0, 125.0 }; // shoulder->elbow, elbow -> wrist, wrist -> tip of long grip
-//int calibration[4][2] = {1500, 800, 1450, 800, 1600, 800, 1500, 1000};
 int grip = 0;
 arm_state st;
 int debug;
