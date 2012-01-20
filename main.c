@@ -8,7 +8,7 @@
 float p[4][2] = { 250.0, 100.0, 0,0,0,0,0,0 };
 float theta[4] = { 0.3, 0.6, M_PI, 0.0 };
 float rtheta[4] = { 7*M_PI/8, M_PI/12, M_PI, 0.0 }; // (relative angles) make this match the theta values better
-float length[3] = {234.0/1.5, 300.0/1.5, 60.0/1.5};
+float length[3] = {147.0, 190.0, 125.0 }; // shoulder->elbow, elbow -> wrist, wrist -> tip of long grip
 int calibration[4][2] = {1500, 800, 1450, 800, 1600, 800, 1500, 1000};
 int grip = 0;
 
@@ -58,7 +58,7 @@ void solveCircles(float l1, float l2, float tx, float ty, float* t1, float* t2) 
     float ds = pow(tx,2) + pow(ty,2);
 
     float rt = acos( (pow(l1,2)+pow(l2,2)-ds)/(2*l1*l2) );
-    *t1 = l2*sin(rt)/sqrt(ds);
+    *t1 = asin(l2*sin(rt)/sqrt(ds));
     *t2 = rt + (*t1) - M_PI;
 
     float rotate = atan2(ty,tx);
@@ -67,10 +67,10 @@ void solveCircles(float l1, float l2, float tx, float ty, float* t1, float* t2) 
     *t2 += rotate;
 }
 
-
 // stupid solver
 void ssolve(float tx, float ty) {
     float d = sqrt(pow(tx,2) + pow(ty,2));
+    float d_constrained = sqrt(pow(tx, 2) + pow(ty+length[2], 2));
 
     if (d > (length[0]+length[1]+length[2]) ) {
         theta[0] = atan2(ty,tx);
@@ -78,12 +78,12 @@ void ssolve(float tx, float ty) {
         theta[1] = theta[0];
         theta[2] = theta[0];
     }
-    else if (d > (length[0]+length[1]-length[2])) {
+    else if (d_constrained > (length[0]+length[1])) {
         solveCircles(length[0]+length[1], length[2], tx, ty, theta, theta+2);
         theta[1]=theta[0];
     }
     else {
-        solveCircles(length[0], length[1], tx, ty+length[2], theta, theta+1);
+        solveCircles(length[0], length[1], tx, ty + length[2], theta, theta+1);
         theta[2] = -M_PI/2;
     }
 
