@@ -2,6 +2,7 @@
 #include <float.h>
 #include <math.h>
 #include <stdio.h>
+#include "al5d.h"
 
 #define M_PI 3.14159265358979323846
 
@@ -9,14 +10,16 @@ float p[4][2] = { 250.0, 100.0, 0,0,0,0,0,0 };
 float theta[4] = { 0.3, 0.6, M_PI, 0.0 };
 float rtheta[4] = { 7*M_PI/8, M_PI/12, M_PI, 0.0 }; // (relative angles) make this match the theta values better
 float length[3] = {147.0, 190.0, 125.0 }; // shoulder->elbow, elbow -> wrist, wrist -> tip of long grip
-int calibration[4][2] = {1500, 800, 1450, 800, 1600, 800, 1500, 1000};
+//int calibration[4][2] = {1500, 800, 1450, 800, 1600, 800, 1500, 1000};
 int grip = 0;
+arm_state st;
+int debug;
 
 #define DT 0.03
 #define WIDTH 640
 #define HEIGHT 480
 #define DELAY 0.01
-#define SPEED 1000
+#define SPEED 2000
 
 #define GRIP_BIAS 20.0
 
@@ -135,30 +138,26 @@ void calcPoints() {
 }
 
 void sayshit() {
-  static float old_theta0 = FLT_MAX;
-  static float old_theta1 = FLT_MAX;
-  static float old_theta2 = FLT_MAX;
-  static float old_theta3 = FLT_MAX;
-  static float old_grip = FLT_MAX;
-  float theta0 = calibration[0][0] + calibration[0][1]*(rtheta[0]/M_PI*2 - 1.0);
+  /*float theta0 = calibration[0][0] + calibration[0][1]*(rtheta[0]/M_PI*2 - 1.0);
   float theta1 = calibration[1][0] - calibration[1][1]*(rtheta[1]/M_PI*2.0 - 1.0);
   float theta2 = calibration[2][0] + calibration[2][1]*(rtheta[2]/M_PI*2.0 - 1.0);
   float theta3 = calibration[3][0] + calibration[3][1]*theta[3]/M_PI*2.0;
   if (theta0 != old_theta0) printf("#1 P%d S%d\r", (int)theta0, SPEED);
   if (theta1 != old_theta1) printf("#2 P%d S%d\r", (int)theta1, SPEED);
   if (theta2 != old_theta2) printf("#3 P%d S%d\r", (int)theta2, SPEED);
-  if (theta3 != old_theta3) printf("#0 P%d S%d\r", (int)theta3, SPEED);
+  if (theta3 != old_theta3) printf("#0 P%d S%d\r", (int)theta3, SPEED);*/
 
-  if (old_grip != grip) {
-    if (grip) printf("#4 P900\r");
-    else      printf("#4 P1800 S1000\r");
-  }
-  old_theta0 = theta0;
-  old_theta1 = theta1;
-  old_theta2 = theta2;
-  old_theta3 = theta3;
-  old_grip = grip;
-  fflush(stdout);
+  armSetRotation(&st, 1, rtheta[0]);
+  armSetRotation(&st, 2, M_PI-rtheta[1]);
+  armSetRotation(&st, 3, rtheta[2]);
+  armSetRotation(&st, 0, theta[3]);
+
+  if (grip)
+    armSetRotation(&st, 4, M_PI/4.0);
+  else
+    armSetRotation(&st, 4, M_PI);
+
+  armFlush(&st, debug);
 }
 
 void initialize() {
@@ -168,7 +167,17 @@ void initialize() {
 }
 
 
-int main() {
+int main(int argc, char ** argv) {
+  debug = argc == 1;
+  if(!armInit(&st, "/dev/ttyUSB0"))
+    if(debug)
+      st.fd = 1;
+    else
+      exit(1);
+  for(int i=0;i<6;++i)
+    armSetSpeed(&st, i, SPEED);
+
+
   glfwInit();
   glfwOpenWindow(WIDTH, HEIGHT, 8,8,8,8,0,0,GLFW_WINDOW);
   glMatrixMode(GL_PROJECTION);
@@ -221,4 +230,5 @@ int main() {
   theta[1] = 1.129202;
   grip = 1;
   sayshit();
+  if(!debug) armClose(&st);
 }
