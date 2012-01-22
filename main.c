@@ -6,7 +6,7 @@
 
 #define M_PI 3.14159265358979323846
 
-float p[4][2] = { 250.0, 100.0, 0,0,0,0,0,0 };
+float p[4][2] = { 350.0, 200.0, 0,0,0,0,0,0 };
 float theta[4] = { 0.3, 0.6, M_PI, 0.0 };
 float rtheta[4] = { 7*M_PI/8, M_PI/12, M_PI, 0.0 }; // (relative angles) make this match the theta values better
 float length[3] = {147.0, 190.0, 125.0 }; // shoulder->elbow, elbow -> wrist, wrist -> tip of long grip
@@ -15,8 +15,8 @@ arm_state st;
 int debug;
 
 #define DT 0.03
-#define WIDTH 640
-#define HEIGHT 480
+#define WIDTH 1280
+#define HEIGHT 760
 #define DELAY 0.01
 #define SPEED 2000
 
@@ -176,6 +176,7 @@ int main(int argc, char ** argv) {
   for(int i=0;i<6;++i)
     armSetSpeed(&st, i, SPEED);
 
+  armSetRotation(&st, 5, M_PI/2);
 
   glfwInit();
   glfwOpenWindow(WIDTH, HEIGHT, 8,8,8,8,0,0,GLFW_WINDOW);
@@ -187,7 +188,7 @@ int main(int argc, char ** argv) {
   int running = 1;
   double t0 = glfwGetTime();
   initialize();
-  sleep(1);
+//  sleep(1);
   while (running) {
     int x, y, a;
     glfwGetMousePos(&x, &y);
@@ -195,9 +196,9 @@ int main(int argc, char ** argv) {
     y = HEIGHT - y;
     x-= p[0][0];
     y-= p[0][1];
-    theta[3] = (double)a*M_PI/(24);
-    if (theta[3] < -M_PI/2) theta[3] = -M_PI/2;
-    if (theta[3] > M_PI/2) theta[3] = M_PI/2;
+    theta[3] = (double)a*M_PI/(72) + M_PI/2;
+    if (theta[3] < 0) theta[3] = 0;
+    if (theta[3] > M_PI) theta[3] = M_PI;
     //solve(x, p[0][1]+20);
     ssolve(x, y);
     calcPoints();
