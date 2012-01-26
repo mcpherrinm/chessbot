@@ -28,21 +28,26 @@ int armInit(arm_state * as, char * path) {
 	if(!as)
 		return 0;
 
-	as->fd = open(path, O_RDWR|O_NOCTTY);
-	if(as->fd == -1) {
-		switch(errno) {
-		case EACCES:
-			fprintf(stderr, "al5d: Could not open %s for read and write.\n", path);
-			break;
-		case EINVAL:
-			fprintf(stderr, "al5d: Got EINVAL opening %s.\n", path);
-			break;
-		default:
-			fprintf(stderr, "al5d: Something horrible happened opening %s.\n", path);
-			break;
+	if(path) {
+		as->fd = open(path, O_RDWR|O_NOCTTY);
+		if(as->fd == -1) {
+			switch(errno) {
+			case EACCES:
+				fprintf(stderr, "al5d: Could not open %s for read and write.\n", path);
+				break;
+			case EINVAL:
+				fprintf(stderr, "al5d: Got EINVAL opening %s.\n", path);
+				break;
+			default:
+				fprintf(stderr, "al5d: Something horrible happened opening %s.\n", path);
+				break;
+			}
+			as->fd = 0;
+			return 0;
 		}
-		as->fd = 0;
-		return 0;
+	} else {
+		/* Default to stdin if path is null*/
+		as->fd = 1;
 	}
 
 	struct termios fd_te;
@@ -87,7 +92,7 @@ void armClose(arm_state * as) {
 	}
 }
 
-void armSetRotation(arm_state * as, int joint, double theta) {
+void armSetRotation(arm_state * as, enum jointname joint, double theta) {
 	if(!as || !as->fd) {
 		fprintf(stderr, "al5d: armSetRotation called on invalid context.\n");
 		return;
@@ -105,7 +110,7 @@ void armSetRotation(arm_state * as, int joint, double theta) {
 	as->updated[joint] = 1;
 }
 
-void armSetSpeed(arm_state * as, int joint, short speed) {
+void armSetSpeed(arm_state * as, enum jointname joint, short speed) {
 	if(!as || !as->fd) {
 		fprintf(stderr, "al5d: armSetSpeed called on invalid context.\n");
 		return;

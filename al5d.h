@@ -1,6 +1,17 @@
+#define M_PI 3.14159265358979323846
+
 #define NUM_JOINTS 6
 
-static int servo_range[] = 
+enum jointname {
+  JOINT_BASE = 0,
+  JOINT_SHOULDER = 1,
+  JOINT_ELBOW = 2,
+  JOINT_WRIST = 3,
+  JOINT_GRIP = 4,
+  JOINT_TILT = 5
+};
+
+static const int servo_range[] = 
 	{
 	  590,	2450,
 	  650,	2320,
@@ -10,7 +21,10 @@ static int servo_range[] =
 	  690,	2500
 	};
 
-static double angle_offset[] =
+// shoulder->elbow, elbow ->wrist, wrist -> tip of long grip
+static const float length[3] = {147.0, 190.0, 125.0 }; 
+
+static const double angle_offset[] =
 	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
 struct arm_state_t {
@@ -25,7 +39,7 @@ typedef struct arm_state_t arm_state;
 
 int armInit(arm_state * as, char * path);
 void armClose(arm_state * as);
-void armSetRotation(arm_state * as, int joint, double theta);
-void armSetSpeed(arm_state * as, int joint, short speed);
+void armSetRotation(arm_state * as, enum jointname joint, double theta);
+void armSetSpeed(arm_state * as, enum jointname joint, short speed);
 void armFlush(arm_state * as, int debug);
 
