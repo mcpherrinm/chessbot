@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-c99 main.c al5d.c -lm -lglfw
+make hobo
+cp hobo a.out
