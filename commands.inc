@@ -1,0 +1,2 @@
+CMD(rest)
+CMD(touch)

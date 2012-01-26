@@ -3,6 +3,9 @@ LDFLAGS=-lm
 CC=gcc
 LD=gcc
 
+cli: cli.o cmd_impl.o al5d.o
+	$(LD) $(LDFLAGS) -o $@ $^ -lreadline
+
 sine: al5d.o sine.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
@@ -20,4 +23,4 @@ hobo: main.o al5d.o
 
 .PHONY: clean
 clean: 
-	-rm sine hover rest touch hobo *.o
+	-rm cli sine hover rest touch hobo *.o
