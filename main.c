@@ -7,10 +7,9 @@
 
 #define M_PI 3.14159265358979323846
 
-float p[4][2] = { 350.0, 200.0, 0,0,0,0,0,0 };
+float p[4][2] = {{ 350.0, 200.0}, {0,0},{0,0},{0,0} };
 float theta[4] = { 0.3, 0.6, M_PI, 0.0 };
 float rtheta[4] = { 7*M_PI/8, M_PI/12, M_PI, 0.0 }; // (relative angles) make this match the theta values better
-float length[3] = {147.0, 190.0, 125.0 }; // shoulder->elbow, elbow -> wrist, wrist -> tip of long grip
 int grip = 0;
 arm_state st;
 int debug;
@@ -169,11 +168,13 @@ void initialize() {
 
 int main(int argc, char ** argv) {
   debug = argc == 1;
-  if(!armInit(&st, "/dev/ttyUSB0"))
-    if(debug)
+  if(!armInit(&st, "/dev/ttyUSB0")) {
+    if(debug) {
       st.fd = 1;
-    else
+    } else {
       exit(1);
+    }
+  }
   for(int i=0;i<6;++i)
     armSetSpeed(&st, i, SPEED);
 

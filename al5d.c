@@ -21,7 +21,6 @@
 #define max(x, y) ( ((x) > (y)) ? (x) : (y) )
 
 #define TTY_BAUDRATE B115200
-#define M_PI 3.14159265358979323846
 
 int armInit(arm_state * as, char * path) {
 	int i, j;
@@ -157,10 +156,6 @@ void armFlush(arm_state * as, int debug) {
 	if((c_pos - c_bfr) < 4)
 		return;
 
-	// done
-	if(debug)
-		fwrite(c_bfr, sizeof(char), (c_pos - c_bfr), stdout);
-	else
-		write(as->fd, c_bfr, (c_pos - c_bfr));
+	write(as->fd, c_bfr, (c_pos - c_bfr));
 }
 
