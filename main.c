@@ -156,7 +156,7 @@ void sayshit() {
   else
     armSetRotation(&st, 4, M_PI);
 
-  armFlush(&st, debug);
+  armFlush(&st);
 }
 
 void initialize() {
@@ -168,12 +168,9 @@ void initialize() {
 
 int main(int argc, char ** argv) {
   debug = argc == 1;
-  if(!armInit(&st, "/dev/ttyUSB0")) {
-    if(debug) {
-      st.fd = 1;
-    } else {
-      exit(1);
-    }
+  char *device = debug ? 0 : "/dev/ttyUSB0";
+  if(!armInit(&st, device)) {
+    exit(1);
   }
   for(int i=0;i<6;++i)
     armSetSpeed(&st, i, SPEED);

@@ -25,7 +25,7 @@ int rest(int argc, char **argv) {
   armSetRotation(S, JOINT_BASE, 2);
   armSetRotation(S, JOINT_TILT, 0);
   armSetRotation(S, JOINT_GRIP, M_PI);
-  armFlush(S, 1);
+  armFlush(S);
 
   return 0;
 }
@@ -35,11 +35,11 @@ int touch(char argc, char **argv) {
     armSetSpeed(S, i, 200);
     armSetRotation(S, i, M_PI/2);
   }
-  armFlush(S, 1);
+  armFlush(S);
   sleep(3);
   armSetRotation(S, JOINT_WRIST, M_PI/1.7);
   armSetRotation(S, JOINT_SHOULDER, M_PI/2.46);
-  armFlush(S, 1);
+  armFlush(S);
 
   return 0;
 }

@@ -33,12 +33,12 @@ int main(int argc, char **argv) {
   }
   for(float P = M_PI; P > 0; P -= 0.2) {
     calcpos(P, S);
-    armFlush(S, 1);
+    armFlush(S);
     sleep(2);
   }
   for(float P = 0; P < M_PI; P += 0.2) {
     calcpos(P, S);
-    armFlush(S, 1);
+    armFlush(S);
     sleep(2);
   }
 }

@@ -123,7 +123,7 @@ void armSetSpeed(arm_state * as, enum jointname joint, short speed) {
 	as->joint_s[joint] = speed;
 }
 
-void armFlush(arm_state * as, int debug) {
+void armFlush(arm_state * as) {
 	int i;
 	if(!as || !as->fd) {
 		fprintf(stderr, "al5d: armFlush called on invalid context.\n");

@@ -41,5 +41,5 @@ int armInit(arm_state * as, char * path);
 void armClose(arm_state * as);
 void armSetRotation(arm_state * as, enum jointname joint, double theta);
 void armSetSpeed(arm_state * as, enum jointname joint, short speed);
-void armFlush(arm_state * as, int debug);
+void armFlush(arm_state * as);
 
