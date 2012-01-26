@@ -1,6 +1,7 @@
 #include "al5d.h"
 #include "cli.h"
 #include <unistd.h>
+#include <math.h>
 
 arm_state s;
 arm_state *S = &s;

@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include "al5d.h"
 
-#define M_PI 3.14159265358979323846
 
 float p[4][2] = {{ 350.0, 200.0}, {0,0},{0,0},{0,0} };
 float theta[4] = { 0.3, 0.6, M_PI, 0.0 };
