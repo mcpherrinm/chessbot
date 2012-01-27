@@ -109,6 +109,16 @@ void armSetRotation(arm_state * as, enum jointname joint, double theta) {
 	as->updated[joint] = 1;
 }
 
+void armSetAll(arm_state * as, float base, float shoulder, float elbow, float wrist, float grip, float roll) {
+	armSetRotation(as, JOINT_BASE, base);
+	armSetRotation(as, JOINT_SHOULDER, shoulder);
+	armSetRotation(as, JOINT_ELBOW, elbow);
+	armSetRotation(as, JOINT_WRIST, wrist);
+	armSetRotation(as, JOINT_GRIP, grip);
+	armSetRotation(as, JOINT_ROLL, roll);
+	armFlush(as);
+}
+
 void armSetSpeed(arm_state * as, enum jointname joint, short speed) {
 	if(!as || !as->fd) {
 		fprintf(stderr, "al5d: armSetSpeed called on invalid context.\n");
