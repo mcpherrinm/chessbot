@@ -1,4 +1,7 @@
 #define NUM_JOINTS 6
+#include<math.h>
+
+#define M_PI 3.141592653589793
 
 enum jointname {
   JOINT_BASE = 0,
@@ -9,7 +12,7 @@ enum jointname {
   JOINT_TILT = 5
 };
 
-static const int servo_range[] = 
+static const int servo_range[] =
 	{
 	  590,	2450,
 	  650,	2320,
@@ -20,7 +23,7 @@ static const int servo_range[] =
 	};
 
 // shoulder->elbow, elbow ->wrist, wrist -> tip of long grip
-static const float length[3] = {147.0, 190.0, 125.0 }; 
+static const float length[3] = {147.0, 190.0, 125.0 };
 
 static const double angle_offset[] =
 	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
