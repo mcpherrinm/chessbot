@@ -1,9 +1,7 @@
 #pragma once
-
-#define NUM_JOINTS 6
 #include<math.h>
 
-#define M_PI 3.141592653589793
+#define NUM_JOINTS 6
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
