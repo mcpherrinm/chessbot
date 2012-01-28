@@ -1,3 +1,5 @@
+#pragma once
+
 #define NUM_JOINTS 6
 
 #ifndef M_PI
