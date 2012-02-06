@@ -27,7 +27,7 @@ static const int servo_range[] =
 	};
 
 // shoulder->elbow, elbow ->wrist, wrist -> tip of long grip
-static const float length[3] = {147.0, 190.0, 125.0 };
+static const float length[3] = {146.0, 187.0, 130.0 };
 
 static const double angle_offset[] =
 	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
