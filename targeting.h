@@ -6,9 +6,10 @@
  */
 
 struct arm_position {
-  float joins[NUM_JOINTS];
+  float joint[NUM_JOINTS];
 };
 
+/* Units: mm */
 struct xy {
   float x;
   float y;
@@ -37,7 +38,7 @@ bool aquiretarget(struct xy target, struct arm_position *result);
  * Returns true iff the desired angle is inside the possible restrictions.
  */
 
-bool pointat(float griprotation, struct arm_postion *posn);
+bool pointat(float griprotation, struct arm_position *posn);
 
 /*
  * planmove takes a desired arm_position and returns an array of intermediate
