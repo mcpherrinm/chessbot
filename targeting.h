@@ -26,6 +26,9 @@ struct xy {
 
 bool aquiretarget(struct xy target, struct arm_position *result);
 
+/*inverse of above */
+bool getcoords(struct arm_position pos, struct xy *result);
+
 /*
  * pointat takes a desired gripper angle from vertical and updates an arm_position
  * based on the position the arm_position represents.
@@ -39,17 +42,3 @@ bool aquiretarget(struct xy target, struct arm_position *result);
  */
 
 bool pointat(float griprotation, struct arm_position *posn);
-
-/*
- * planmove takes a desired arm_position and returns an array of intermediate
- * positions that avoids intersecting an exclusion zone, which is a a function
- * that checks something or other.
- *
- * planMove returns an int indicating the length of the move sequence.  It is
- * negative if a plan cannot be found.
- *
- * This is probably important to automated operation, but for now, it is
- * unimplemented.
- */
-
-int planmove();

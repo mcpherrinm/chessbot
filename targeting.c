@@ -53,13 +53,14 @@ bool aquiretarget(struct xy target, struct arm_position *result) {
    *  Elbow is straight at 0. Bent at Pi/2.
    */
 
+  /*Useful values: squares of things */
   const double l0s = length[0]*length[0];
   const double l1s = length[1]*length[1];
-  const double dts = distance*distance;
+  const double dts = x*x + y*y;
 
   double shoulder =
     /*angle from level to target point*/
-    tan(y/x) 
+    tan(y/x)
     /* Cosine law on triangle (base, elbow, target) */
     + acos( (l0s + dts - l1s) /(2*length[0]*distance));
 
@@ -71,10 +72,10 @@ bool aquiretarget(struct xy target, struct arm_position *result) {
 
   /*Sanity checks on angles: */
 
-  /* restriction on x should prevent this*/
-  if(shoulder > M_PI/2) {
+  /* uh
+  if(shoulder > ????) {
     return false;
-  }
+  }*/
 
   /* restriction on y should prevent this*/
   if(shoulder < 0) return false;
@@ -88,6 +89,29 @@ bool aquiretarget(struct xy target, struct arm_position *result) {
   /* All checks pass, write data and return */
   result->joint[JOINT_SHOULDER] = shoulder;
   result->joint[JOINT_ELBOW] = elbow;
+  return true;
+}
+
+/* Get the (x, y) coordinates of the wrist based on the angles that the arm is
+ * currently in. Except for numeric stability, this is the inverse of
+ * aquiretarget.
+ */
+bool getcoords(struct arm_position pos, struct xy *result) {
+  double shoulderangle = pos.joint[JOINT_SHOULDER];
+  double elbowangle = pos.joint[JOINT_ELBOW];
+
+  struct xy elbow;
+
+  elbow.x = cos(shoulderangle)*length[0];
+  elbow.y = sin(shoulderangle)*length[0];
+
+  double elbowtovertical = shoulderangle - elbowangle;
+
+  printf("elbow: %f %f\n", elbow.x, elbow.y);
+
+  result->x = elbow.x + sin(elbowtovertical)*length[1];
+  result->y = elbow.y + cos(elbowtovertical)*length[1];
+
   return true;
 }
 
@@ -108,20 +132,4 @@ bool pointat(float griprotation, struct arm_position *posn) {
    *  whores.
    */
   return false;
-}
-
-/*
- * planmove takes a desired arm_position and returns an array of intermediate
- * positions that avoids intersecting an exclusion zone, which is a a function
- * that checks something or other.
- *
- * planMove returns an int indicating the length of the move sequence.  It is
- * negative if a plan cannot be found.
- *
- * This is probably important to automated operation, but for now, it is
- * unimplemented.
- */
-
-int planmove() {
-  return -1;
 }
